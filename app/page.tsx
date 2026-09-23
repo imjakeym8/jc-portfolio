@@ -14,6 +14,7 @@ const CONTACT_EMAIL = "jc.tacogue@gmail.com";
 const NAVIGATION_REVEAL_ZONE_PIXELS = 120;
 const NAVIGATION_HIDE_DELAY_MS = 300;
 const SWIPE_THRESHOLD_PIXELS = 55;
+const SCROLL_EDGE_TOLERANCE_PIXELS = 8;
 
 const sections = [
   "Introduction",
@@ -88,6 +89,19 @@ const sectionVariants = {
   }),
 };
 
+function hasOffscreenSectionContent(scene: HTMLElement, direction: number) {
+  const sceneBounds = scene.getBoundingClientRect();
+
+  return Array.from(scene.children).some((child) => {
+    if (getComputedStyle(child).position === "absolute") return false;
+
+    const contentBounds = child.getBoundingClientRect();
+    return direction > 0
+      ? contentBounds.bottom > sceneBounds.bottom + SCROLL_EDGE_TOLERANCE_PIXELS
+      : contentBounds.top < sceneBounds.top - SCROLL_EDGE_TOLERANCE_PIXELS;
+  });
+}
+
 export default function Home() {
   const [activeSection, setActiveSection] = useState(0);
   const [navigationDirection, setNavigationDirection] = useState(1);
@@ -95,7 +109,11 @@ export default function Home() {
   const [isNavigationVisible, setIsNavigationVisible] = useState(false);
   const isTransitioning = useRef(false);
   const navigationHideTimer = useRef<number | null>(null);
-  const touchStart = useRef<{ y: number; scrollTop: number } | null>(null);
+  const touchStart = useRef<{
+    y: number;
+    canScrollDown: boolean;
+    canScrollUp: boolean;
+  } | null>(null);
   const prefersReducedMotion = useReducedMotion();
 
   // ============================================
@@ -143,9 +161,7 @@ export default function Home() {
       if (Math.abs(event.deltaY) < 25) return;
       const scene = document.querySelector<HTMLElement>(".desktop-sections .scene");
       if (scene) {
-        const canScrollDown = scene.scrollTop + scene.clientHeight < scene.scrollHeight - 2;
-        const canScrollUp = scene.scrollTop > 2;
-        if (event.deltaY > 0 ? canScrollDown : canScrollUp) {
+        if (hasOffscreenSectionContent(scene, event.deltaY)) {
           if (event.target instanceof Node && !scene.contains(event.target)) {
             event.preventDefault();
             scene.scrollBy({ top: event.deltaY });
@@ -164,7 +180,7 @@ export default function Home() {
 
       if (event.key === "ArrowDown") {
         event.preventDefault();
-        if (scene && scene.scrollTop + scene.clientHeight < scene.scrollHeight - 2) {
+        if (scene && hasOffscreenSectionContent(scene, 1)) {
           scene.scrollBy({ top: 80, behavior: "smooth" });
           return;
         }
@@ -173,7 +189,7 @@ export default function Home() {
 
       if (event.key === "ArrowUp") {
         event.preventDefault();
-        if (scene && scene.scrollTop > 2) {
+        if (scene && hasOffscreenSectionContent(scene, -1)) {
           scene.scrollBy({ top: -80, behavior: "smooth" });
           return;
         }
@@ -198,7 +214,11 @@ export default function Home() {
     const handleTouchStart = (event: TouchEvent) => {
       const scene = document.querySelector<HTMLElement>(".desktop-sections .scene");
       if (!scene || event.touches.length !== 1) return;
-      touchStart.current = { y: event.touches[0].clientY, scrollTop: scene.scrollTop };
+      touchStart.current = {
+        y: event.touches[0].clientY,
+        canScrollDown: hasOffscreenSectionContent(scene, 1),
+        canScrollUp: hasOffscreenSectionContent(scene, -1),
+      };
     };
 
     const handleTouchEnd = (event: TouchEvent) => {
@@ -208,11 +228,11 @@ export default function Home() {
       if (!scene || !start || event.changedTouches.length !== 1) return;
       const distance = start.y - event.changedTouches[0].clientY;
       if (Math.abs(distance) < SWIPE_THRESHOLD_PIXELS) return;
-      const atBottom = scene.scrollTop + scene.clientHeight >= scene.scrollHeight - 2;
-      const atTop = scene.scrollTop <= 2;
-      if (distance > 0 && atBottom && start.scrollTop >= scene.scrollHeight - scene.clientHeight - 2) {
+      const atBottom = !hasOffscreenSectionContent(scene, 1);
+      const atTop = !hasOffscreenSectionContent(scene, -1);
+      if (distance > 0 && atBottom && !start.canScrollDown) {
         navigateToSection(activeSection + 1);
-      } else if (distance < 0 && atTop && start.scrollTop <= 2) {
+      } else if (distance < 0 && atTop && !start.canScrollUp) {
         navigateToSection(activeSection - 1);
       }
     };

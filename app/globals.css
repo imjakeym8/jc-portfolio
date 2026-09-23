@@ -472,6 +472,7 @@ a {
 
 .contact {
   max-width: 64rem;
+  margin-inline: auto;
 }
 
 .contact > p {
@@ -548,16 +549,15 @@ footer {
   justify-content: space-between;
   color: var(--beige);
   font-size: 0.68rem;
-  padding-right: 11rem;
 }
 
 /* ============================================
    SECTION: Responsive Behavior
    ============================================ */
 
-@media (min-width: 1101px) and (hover: hover) {
-  .scene {
-    padding-right: clamp(13rem, 15vw, 16rem);
+@media (min-width: 1101px) and (max-height: 800px) {
+  .scene-3 {
+    padding-block: 2rem;
   }
 }
 
@@ -694,6 +694,10 @@ footer {
   .scene {
     padding-top: 3rem;
     padding-bottom: 3rem;
+  }
+
+  .scene-3 {
+    padding-block: 1rem;
   }
 
   .hero h1,
