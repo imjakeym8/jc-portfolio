@@ -46,6 +46,7 @@ const projects = [
     "Developer Worklog",
     "A structured daily workflow for shipped work, blockers, development time, and GitHub activity.",
     "Next.js · FastAPI · PostgreSQL · GitHub API",
+    "https://worklog.imjakey.dev/",
   ],
 ];
 
@@ -329,7 +330,7 @@ export default function Home() {
                     href={url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label={`View ${title} on GitHub`}
+                    aria-label={`View ${title}${url.startsWith("https://github.com/") ? " on GitHub" : " live site"}`}
                     style={{ position: "absolute", inset: 0 }}
                   />
                 )}
