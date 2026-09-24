@@ -28,19 +28,20 @@ const projects = [
   [
     "Community Analytics Automation",
     "An automated reporting workflow that turns community activity into weekly and monthly client-ready analytics.",
-    "Python · Automation · Analytics · APIs",
+    "Python · Automation · Analytics · APIs · Telegram · Google Sheets · MongoDB",
     "https://github.com/imjakeym8/handybot",
   ],
   [
     "Discord Support System",
     "A custom ticket-management workflow that organizes technical issues, response flow, and escalation.",
-    "Python · Discord API · Workflow Automation",
+    "Python · Discord API · Workflow Automation · MongoDB",
     "https://github.com/imjakeym8/ticketprompt",
   ],
   [
-    "Agentic Workflow Assistant",
-    "An experimental AI workflow that turns natural-language requests into structured multi-step actions.",
-    "AI · Agents · LLMs · Automation",
+    "Mirevia Skin",
+    "A modern skincare shopping experience featuring curated product lineups, cart functionality, customer testimonials, newsletter signup, social calls to action, and account registration with discount incentives.",
+    "Next.js · React · TypeScript · PostgreSQL · Better Auth · Stripe · Vercel",
+    "https://mirevia-six.vercel.app/",
   ],
   [
     "Developer Worklog",
