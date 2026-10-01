@@ -116,7 +116,7 @@ a {
 .about em,
 .contact em {
   color: var(--orange);
-  font-style: italic;
+  font-style: normal;
   font-weight: 500;
 }
 
@@ -146,6 +146,7 @@ a {
 
 .explore i {
   color: var(--orange);
+  font-style: normal;
   font-size: 1.2rem;
   padding-left: 0.4rem;
 }
